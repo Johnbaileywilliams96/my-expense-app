@@ -33,18 +33,38 @@ export default function BookStore() {
         }
     };
 
-    
-      const handleSubmit = async (e) => {
-        const response = await fetch('/api/books', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ title, description, category_id: parseInt(categoryId) }),
-          });
-      
-      }
+    const getCategoryTitle = (categoryId) => {
+      const category_name = categories.find(category => category.id === categoryId)
 
+      return 
+    }
+
+    
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      // Add this console.log to debug what you're sending
+      console.log('Submitting:', { title, description, category_id: parseInt(categoryId) });
+      
+      const response = await fetch('/api/books', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+              title, 
+              description, 
+              category_id: parseInt(categoryId)  // Make sure this is here
+          }),
+      });
+  
+      if (response.ok) {
+          setTitle('');
+          setDescription('');
+          setCategoryId('');  // Reset category selection
+          fetchBooks();
+      }
+  }
     return (
         <div>
             <h1>books</h1>
