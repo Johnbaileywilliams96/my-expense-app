@@ -5,7 +5,8 @@ export default function BookStore() {
     const [categories, setCategories] = useState([])
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [categoryId, setCategoryId] = useState('')
+    const [categoryId, setCategoryId] = useState('');
+    const [editingId, setEditingId] = useState(null);
 
 
     useEffect(() => {
@@ -42,7 +43,37 @@ export default function BookStore() {
       }
     }
 
-  
+
+    const handleEdit = (book) => {
+      setEditingId(book.id);
+      setTitle(book.title);
+      setDescription(book.description);
+      setCategoryId(book.category_id);
+    }
+
+
+    const handleUpdate = async (e) => {
+      e.preventDefault();
+      const response = await fetch(`/api/books/${editingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({ title, description, category_id: parseInt(categoryId)})
+      });
+      if (response.ok) {
+        setTitle('');
+    setDescription('');
+    setCategoryId('');
+    setEditingId(null);
+    fetchBooks();
+      }
+    }
+
+    const cancelEdit = () => {
+      setTitle('');
+      setDescription('');
+      setCategoryId('');
+      setEditingId(null);
+    }
     
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -74,8 +105,8 @@ export default function BookStore() {
             <h1>books</h1>
 
 
-           <form onSubmit={handleSubmit}>
-            <label>Book Submition</label>
+           <form onSubmit={editingId ? handleUpdate : handleSubmit}>
+            <label>{editingId ? 'Edit Book' : 'Book Submission'}</label>
             <div>
 
                 <input
@@ -116,11 +147,15 @@ export default function BookStore() {
                     </select>
                 </div>
 
-            <button
-                type="submit"
-            >
-                    Submit
-            </button>
+                <button type="submit">
+    {editingId ? 'Update' : 'Submit'}
+  </button>
+  
+  {editingId && (
+    <button type="button" onClick={cancelEdit}>
+      Cancel
+    </button>
+  )}
           
             </form> 
 
@@ -143,6 +178,8 @@ export default function BookStore() {
               <button
                 onClick={() => handleDelete(book.id)}
               >Delete</button>
+
+            <button onClick={() => handleEdit(book)}>Edit</button>
             </div>
           ))
         )}
