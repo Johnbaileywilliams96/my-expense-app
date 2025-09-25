@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react"
 
-export default function BookStore() {
+export default function BookStore({user}) {
+
+  if (!user) {
+    return <p>please login</p>
+  }
     const [books, setBooks] = useState([])
     const [categories, setCategories] = useState([])
     const [title, setTitle] = useState('');
