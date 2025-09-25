@@ -33,12 +33,16 @@ export default function BookStore() {
         }
     };
 
-    const getCategoryTitle = (categoryId) => {
-      const category_name = categories.find(category => category.id === categoryId)
-
-      return 
+    const handleDelete = async (bookId) => {
+      const response = await fetch(`/api/books/${bookId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        fetchBooks()
+      }
     }
 
+  
     
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -136,6 +140,9 @@ export default function BookStore() {
               <p><strong>Category:</strong> {book.category_name || 'No category'}</p>
               <p>{book.description}</p>
               <small>Added: {new Date(book.created_at).toLocaleString()}</small>
+              <button
+                onClick={() => handleDelete(book.id)}
+              >Delete</button>
             </div>
           ))
         )}
